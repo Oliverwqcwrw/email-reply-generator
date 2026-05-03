@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Email Reply Generator — Write Perfect Replies in Seconds</title>
+<meta name="description" content="Free AI-powered email reply generator. Paste any email and instantly get professional, friendly, or concise reply suggestions. No signup required.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "AI Email Reply Generator",
+  "description": "Free AI-powered email reply generator. Paste any email and get professional replies instantly.",
+  "applicationCategory": "ProductivityApplication",
+  "operatingSystem": "Any",
+  "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+  "url": "https://oliverwqcwrw.github.io/email-reply-generator/"
+}
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #0d1117; color: #e6edf3; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; min-height: 100vh; }
+  .header { background: #161b22; border-bottom: 1px solid #30363d; padding: 20px 24px; text-align: center; }
+  .header h1 { font-size: 1.8rem; font-weight: 700; color: #58a6ff; }
+  .header p { color: #8b949e; margin-top: 6px; font-size: 0.95rem; }
+  .container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+  .card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .card h2 { font-size: 1rem; font-weight: 600; color: #58a6ff; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+  label { display: block; font-size: 0.875rem; color: #8b949e; margin-bottom: 6px; }
+  input, textarea, select { width: 100%; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; color: #e6edf3; padding: 10px 14px; font-size: 0.9rem; outline: none; transition: border-color .2s; }
+  input:focus, textarea:focus, select:focus { border-color: #58a6ff; }
+  textarea { resize: vertical; line-height: 1.5; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
+  .tone-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 4px; }
+  .tone-btn { background: #0d1117; border: 1px solid #30363d; border-radius: 20px; color: #8b949e; padding: 6px 16px; font-size: 0.85rem; cursor: pointer; transition: all .2s; }
+  .tone-btn.active { background: #1f6feb; border-color: #58a6ff; color: #fff; }
+  .btn { width: 100%; background: #1f6feb; border: none; border-radius: 8px; color: #fff; padding: 12px 24px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background .2s; margin-top: 8px; }
+  .btn:hover { background: #388bfd; }
+  .btn:disabled { background: #21262d; color: #484f58; cursor: not-allowed; }
+  .output-box { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 14px; min-height: 160px; white-space: pre-wrap; font-size: 0.9rem; line-height: 1.6; color: #e6edf3; position: relative; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; background: #21262d; border: 1px solid #30363d; border-radius: 6px; color: #8b949e; padding: 4px 12px; font-size: 0.8rem; cursor: pointer; }
+  .copy-btn:hover { color: #e6edf3; background: #30363d; }
+  .status { font-size: 0.85rem; color: #58a6ff; margin-top: 8px; min-height: 20px; }
+  .provider-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+  .provider-row select { flex: 0 0 180px; }
+  .provider-row input { flex: 1; min-width: 200px; }
+  .donation { text-align: center; padding: 40px 20px; }
+  .donation h3 { font-size: 1.1rem; color: #58a6ff; margin-bottom: 8px; }
+  .donation p { color: #8b949e; font-size: 0.9rem; margin-bottom: 24px; }
+  .qr-row { display: flex; gap: 40px; justify-content: center; flex-wrap: wrap; }
+  .qr-item { text-align: center; }
+  .qr-item img { border-radius: 8px; border: 2px solid #30363d; display: block; margin: 0 auto 8px; }
+  .qr-item .addr { font-size: 0.7rem; color: #484f58; word-break: break-all; max-width: 140px; }
+  .qr-item .label { font-size: 0.85rem; color: #8b949e; margin-bottom: 6px; }
+  .variants { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .var-btn { background: #21262d; border: 1px solid #30363d; border-radius: 6px; color: #8b949e; padding: 5px 14px; font-size: 0.82rem; cursor: pointer; }
+  .var-btn.active, .var-btn:hover { background: #1f6feb22; border-color: #58a6ff; color: #58a6ff; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>✉️ AI Email Reply Generator</h1>
+  <p>Paste any email → choose a tone → get a perfect reply in seconds. Free, no signup.</p>
+</div>
+<div class="container">
+
+  <!-- AI Provider -->
+  <div class="card">
+    <h2>AI Provider</h2>
+    <div class="provider-row">
+      <select id="provider" onchange="updateProviderHint()">
+        <option value="groq">Groq (Free)</option>
+        <option value="openrouter">OpenRouter (Free)</option>
+        <option value="deepseek">DeepSeek</option>
+        <option value="openai">OpenAI</option>
+      </select>
+      <input type="password" id="apiKey" placeholder="Paste your API key here (stored locally)" />
+    </div>
+    <div class="status" id="providerHint">Groq free tier: get key at console.groq.com</div>
+  </div>
+
+  <!-- Input -->
+  <div class="card">
+    <h2>Email to Reply</h2>
+    <div style="margin-bottom:16px">
+      <label>Paste the email you received</label>
+      <textarea id="emailInput" rows="7" placeholder="Hi John,
+
+I wanted to follow up on our last meeting about the Q3 proposal..."></textarea>
+    </div>
+    <div class="row">
+      <div>
+        <label>Your context / key points to mention (optional)</label>
+        <textarea id="context" rows="3" placeholder="e.g. I'm available Thu/Fri, the budget needs approval first..."></textarea>
+      </div>
+      <div>
+        <label>Reply Language</label>
+        <select id="language">
+          <option value="English">English</option>
+          <option value="Chinese">Chinese (中文)</option>
+          <option value="Spanish">Spanish</option>
+          <option value="French">French</option>
+          <option value="German">German</option>
+          <option value="Japanese">Japanese</option>
+        </select>
+        <div style="margin-top:12px">
+          <label>Reply Length</label>
+          <select id="length">
+            <option value="concise">Concise (2-3 sentences)</option>
+            <option value="standard" selected>Standard (1 paragraph)</option>
+            <option value="detailed">Detailed (2-3 paragraphs)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <label>Tone</label>
+      <div class="tone-grid" id="toneGrid">
+        <button class="tone-btn active" data-tone="Professional">Professional</button>
+        <button class="tone-btn" data-tone="Friendly">Friendly</button>
+        <button class="tone-btn" data-tone="Formal">Formal</button>
+        <button class="tone-btn" data-tone="Casual">Casual</button>
+        <button class="tone-btn" data-tone="Empathetic">Empathetic</button>
+        <button class="tone-btn" data-tone="Assertive">Assertive</button>
+      </div>
+    </div>
+    <button class="btn" id="genBtn" onclick="generateReply()">✨ Generate Reply</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <!-- Output -->
+  <div class="card">
+    <h2>Generated Reply</h2>
+    <div style="position:relative">
+      <div class="output-box" id="output">Your AI-generated reply will appear here...</div>
+      <button class="copy-btn" onclick="copyReply()">Copy</button>
+    </div>
+    <div class="variants" id="variants" style="display:none">
+      <span style="color:#8b949e;font-size:0.82rem;align-self:center">Variants:</span>
+    </div>
+  </div>
+
+  <!-- Donation -->
+  <div class="card donation">
+    <h3>☕ Support This Free Tool</h3>
+    <p>If this saved you time, consider buying me a coffee via crypto. No fees, no middleman.</p>
+    <div class="qr-row">
+      <div class="qr-item">
+        <div class="label">USDT (TRC-20 / TRON)</div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=TSvC67jexputnNHayVR8fpScwFmwvZV8jp" alt="USDT QR" width="110" height="110">
+        <div class="addr">TSvC67jexputnNHayVR8fpScwFmwvZV8jp</div>
+      </div>
+      <div class="qr-item">
+        <div class="label">ETH (ERC-20)</div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=0x11e764fac3fcd4be16da43a252a62b156e06a632" alt="ETH QR" width="110" height="110">
+        <div class="addr">0x11e764fac3fcd4be16da43a252a62b156e06a632</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const PROVIDERS = {
+  groq: { url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile', hint: 'Groq free tier: get key at console.groq.com' },
+  openrouter: { url: 'https://openrouter.ai/api/v1/chat/completions', model: 'meta-llama/llama-3.3-70b-instruct:free', hint: 'OpenRouter free tier: get key at openrouter.ai' },
+  deepseek: { url: 'https://api.deepseek.com/v1/chat/completions', model: 'deepseek-chat', hint: 'DeepSeek: get key at platform.deepseek.com' },
+  openai: { url: 'https://api.openai.com/v1/chat/completions', model: 'gpt-4o-mini', hint: 'OpenAI: get key at platform.openai.com' }
+};
+
+let selectedTone = 'Professional';
+let variants = [];
+
+document.querySelectorAll('.tone-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tone-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedTone = btn.dataset.tone;
+  });
+});
+
+function updateProviderHint() {
+  const p = document.getElementById('provider').value;
+  const savedKey = localStorage.getItem('apiKey_' + p) || '';
+  document.getElementById('apiKey').value = savedKey;
+  document.getElementById('providerHint').textContent = PROVIDERS[p].hint;
+}
+
+// Load saved key on init
+window.onload = () => {
+  const p = document.getElementById('provider').value;
+  const saved = localStorage.getItem('apiKey_' + p);
+  if (saved) document.getElementById('apiKey').value = saved;
+};
+
+document.getElementById('apiKey').addEventListener('change', () => {
+  const p = document.getElementById('provider').value;
+  const key = document.getElementById('apiKey').value.trim();
+  if (key) localStorage.setItem('apiKey_' + p, key);
+});
+
+async function generateReply() {
+  const email = document.getElementById('emailInput').value.trim();
+  if (!email) { setStatus('Please paste the email you received.', 'error'); return; }
+  
+  const provider = document.getElementById('provider').value;
+  const apiKey = document.getElementById('apiKey').value.trim();
+  if (!apiKey) { setStatus('Please enter your API key.', 'error'); return; }
+  
+  localStorage.setItem('apiKey_' + provider, apiKey);
+  
+  const ctx = document.getElementById('context').value.trim();
+  const lang = document.getElementById('language').value;
+  const length = document.getElementById('length').value;
+  const tone = selectedTone;
+  
+  const lengthMap = { concise: '2-3 sentences', standard: 'one well-structured paragraph', detailed: '2-3 paragraphs' };
+  
+  const systemPrompt = `You are an expert email writer. Write reply emails that are clear, ${tone.toLowerCase()}, and effective.`;
+  const userPrompt = `Write a ${tone} email reply in ${lang}.
+Length: ${lengthMap[length]}.
+${ctx ? 'Key points to include: ' + ctx : ''}
+
+Original email to reply to:
+---
+${email}
+---
+
+Write only the reply body (no subject line, no "Here is your reply:" prefix). Start directly with the greeting or opening line.`;
+
+  const { url, model } = PROVIDERS[provider];
+  
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  setStatus('Generating reply...', 'info');
+  document.getElementById('output').textContent = '';
+  document.getElementById('variants').style.display = 'none';
+  variants = [];
+  
+  try {
+    const headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + apiKey };
+    if (provider === 'openrouter') {
+      headers['HTTP-Referer'] = 'https://oliverwqcwrw.github.io/email-reply-generator/';
+      headers['X-Title'] = 'AI Email Reply Generator';
+    }
+    
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ model, messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }], temperature: 0.7, max_tokens: 600 })
+    });
+    
+    if (!resp.ok) {
+      const err = await resp.json();
+      throw new Error(err.error?.message || resp.statusText);
+    }
+    
+    const data = await resp.json();
+    const reply = data.choices[0].message.content.trim();
+    document.getElementById('output').textContent = reply;
+    variants.push(reply);
+    setStatus('✅ Reply generated! Click "Generate Reply" again for another variant.', 'success');
+    showVariants();
+  } catch (e) {
+    setStatus('Error: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function showVariants() {
+  const container = document.getElementById('variants');
+  if (variants.length > 0) {
+    container.style.display = 'flex';
+    container.innerHTML = '<span style="color:#8b949e;font-size:0.82rem;align-self:center">Variants:</span>';
+    variants.forEach((v, i) => {
+      const b = document.createElement('button');
+      b.className = 'var-btn' + (i === variants.length - 1 ? ' active' : '');
+      b.textContent = `v${i + 1}`;
+      b.onclick = () => {
+        document.querySelectorAll('.var-btn').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        document.getElementById('output').textContent = v;
+      };
+      container.appendChild(b);
+    });
+  }
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.style.color = type === 'error' ? '#f85149' : type === 'success' ? '#3fb950' : '#58a6ff';
+}
+
+function copyReply() {
+  const text = document.getElementById('output').textContent;
+  if (text && text !== 'Your AI-generated reply will appear here...') {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  }
+}
+</script>
+</body>
+</html>
